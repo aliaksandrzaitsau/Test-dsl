@@ -1,4 +1,4 @@
-def git = "MNT-Lab/mntlab-dsl"
+def git = "aliaksandrzaitsau/Test-dsl"
 def repo = "azaitsau"
 def StName = "azaitsau"
 def mainJob = "MNTLAB-${StName}-main-build-job"
@@ -18,7 +18,7 @@ def branches = proc.in.text.readLines().collect {
 }
 
 job("MNTLAB-${StName}-main-build-job") {
-    label("EPBYMINW7425")
+    
     description 'This main-job'
     parameters {
 	choiceParam('ChooseBranch', ['azaitsau', 'master'], 'Choose wich branch to use')
@@ -61,7 +61,7 @@ job("MNTLAB-${StName}-main-build-job") {
 
 for (int i = 1; i <5; i++) {
 job("MNTLAB-${StName}-child${i}-build-job") {
-    label("EPBYMINW7425")
+   
     parameters {
 	choiceParam('ChooseBranch', branches, '')
     }
