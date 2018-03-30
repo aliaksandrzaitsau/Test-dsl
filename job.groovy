@@ -1,7 +1,8 @@
-def git = "aliaksandrzaitsau/Test-dsl"
+def git = "MNT-Lab/mntlab-dsl"
 def repo = "azaitsau"
-
-def gitURL = "https://github.com/aliaksandrzaitsau/Test-dsl.git"
+def StName = "azaitsau"
+def mainJob = "MNTLAB-${StName}-main-build-job"
+def gitURL = "https://github.com/MNT-Lab/mntlab-dsl.git"
 def command = "git ls-remote -h $gitURL"
 
 def proc = command.execute()
@@ -16,9 +17,11 @@ def branches = proc.in.text.readLines().collect {
     it.replaceAll(/[a-z0-9]*\trefs\/heads\//, '')
 }
 
-job("MNTLAB-azaitsau-main-build-job") {
+job("MNTLAB-${StName}-main-build-job") {
+    label("EPBYMINW7425")
+    description 'This main-job'
     parameters {
-	choiceParam('BRANCH_NAME', ['azaitsau', 'master'], '')
+	choiceParam('ChooseBranch', ['azaitsau', 'master'], 'Choose wich branch to use')
         activeChoiceParam('BUILDS_TRIGGER') {
             choiceType('CHECKBOX')
             groovyScript {
@@ -27,7 +30,7 @@ job("MNTLAB-azaitsau-main-build-job") {
         }
     }
     scm {
-        github(git, '$BRANCH_NAME')
+        github(git, '$ChooseBranch')
     }
     triggers {
         scm('H/1 * * * *')
@@ -45,29 +48,33 @@ job("MNTLAB-azaitsau-main-build-job") {
 		}
 	    }
 	}	
-        shell('chmod +x script.sh && ./script.sh >> output.log && tar -czf ${BRANCH_NAME}_dsl_script.tar.gz output.log')
+        shell('chmod +x script.sh && ./script.sh >> output.log && tar -cf child${i}-\${ChooseBranch}-\${BUILD_NUMBER}_dsl_script.tar.gz output.log')
+    }    
+    wrappers {
+	preBuildCleanup()    
     }
     publishers { 
-	archiveArtifacts('output.log')
+	archiveArtifacts('*.tar.gz')
     }
 
 }
 
-1.upto(4) {
-job("MNTLAB-azaitsau-child${it}-build-job") {
+for (int i = 1; i <5; i++) {
+job("MNTLAB-${StName}-child${i}-build-job") {
+    label("EPBYMINW7425")
     parameters {
-	choiceParam('BRANCH_NAME', branches, '')
+	choiceParam('ChooseBranch', branches, '')
     }
     scm {
-        github(git, '$BRANCH_NAME')
+        github(git, '$ChooseBranch')
     }
     steps {
-        shell('chmod +x script.sh && ./script.sh >> output.log && tar -czf  child${it}_${BUILD_NUMBER}_dsl_script.tar.gz output.log job.groovy script.sh')
+        shell('chmod +x script.sh && ./script.sh >> output.log && tar -cf child${i}-\${ChooseBranch}-\${BUILD_NUMBER}_dsl_script.tar.gz output.log jobs.groovy script.sh && cp child${i}-\${ChooseBranch}-\${BUILD_NUMBER}_dsl_script.tar.gz ../${mainJob}')
     }
     publishers { 
         archiveArtifacts {
-            pattern('output.log')
-            pattern('${BRANCH_NAME}_dsl_script.tar.gz')
+            pattern('*.tar.gz')
+            pattern('child${i}-\${ChooseBranch}-\${BUILD_NUMBER}_dsl_script.tar.gz')
             onlyIfSuccessful()
    }
   }
