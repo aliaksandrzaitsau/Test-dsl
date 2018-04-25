@@ -1,0 +1,21 @@
+AllCops:
+  Exclude:
+    - 'tests/**/*'
+
+Style/NumericPredicate:
+  EnforcedStyle: comparison
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: never
+
+Metrics/LineLength:
+  Max: 120
+
+Metrics/MethodLength:
+  Max: 20
+
+Naming/UncommunicativeMethodParamName:
+  MinNameLength: 1
+
+Metrics/AbcSize:
+  Max: 100
