@@ -1,6 +1,8 @@
 sudo: required
 
-language: ruby
+cache:
+  directories:
+    - /home/travis/.rvm/
 
 services:
   - docker
@@ -9,4 +11,4 @@ before_install:
   - docker build -t tests-runner:$TRAVIS_COMMIT .
 
 script:
-  -  docker run tests-runner:$TRAVIS_COMMIT
+  - docker run tests-runner:$TRAVIS_COMMIT

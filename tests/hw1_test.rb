@@ -1,16 +1,6 @@
 require "minitest/autorun"
-
-home_dir = File.join(File.dirname(__FILE__), "..", "homeworks")
-solution = Dir.entries(home_dir).find { |f| f.match?(/\A\w+_\w+_l\d\.rb\z/) }
-
-unless solution
-  puts "CAN NOT FIND THE SOLUTION FILE, format: 'name_surname_l1.rb"
-  exit 1
-end
-
-solution = File.join(home_dir, solution)
-puts "loading solution: #{solution}"
-require_relative solution
+require_relative "test_helper"
+require_relative get_solution_file(1)
 
 class TestHW1 < Minitest::Test
   def test_true
