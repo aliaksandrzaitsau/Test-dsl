@@ -1,7 +1,9 @@
 require "minitest/autorun"
 require_relative "test_helper"
-require_relative get_solution_file(1)
 
+loaded = get_solution_file(1)
+
+if loaded
 class TestHW1 < Minitest::Test
   def test_true
     assert_equal true, true
@@ -105,4 +107,5 @@ class TestHW1 < Minitest::Test
 
     assert_equal 0, task_4(input)
   end
+end
 end

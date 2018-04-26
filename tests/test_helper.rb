@@ -6,12 +6,12 @@ def get_solution_file(num)
   puts "loading solution: #{solution}"
 
   unless solution
-    puts "!!! CAN NOT FIND THE SOLUTION FILE, format: 'name_surname_l#{num}.rb !!!"
-    exit 0
+    puts "!!! Can not find the solution file, format: 'name_surname_l#{num}.rb !!!"
+    puts "!!! Tests for homework_#{num} will be skipped !!!"
+    return false
   end
 
-  solution = File.join(home_dir, solution)
   puts "loading solution: done"
 
-  solution
+  require_relative File.join(home_dir, solution)
 end
