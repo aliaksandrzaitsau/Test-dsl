@@ -1,0 +1,17 @@
+[Unit]
+Description=Jboss Application Server
+After=network.target
+
+[Service]
+Type=forking
+
+User=jboss
+Group=jboss
+ExecStart=/bin/bash -c 'nohup /opt/jboss/bin/run.sh -b 10.0.0.40 &'
+ExecStop=/bin/bash -c 'bin/shutdown.sh -s 10.0.0.40 -u admin'
+TimeoutStartSec=300
+TimeoutStopSec=600
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
